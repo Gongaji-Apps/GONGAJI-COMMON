@@ -13,6 +13,7 @@ const (
 	RoleCodeKey        key = "role_code"
 	PermissionCodesKey key = "permission_codes"
 	AuthTypeKey        key = "auth_type"
+	OverviewKey        key = "overview"
 )
 
 func WithRequestID(ctx context.Context, id string) context.Context {
@@ -87,4 +88,20 @@ func getString(ctx context.Context, k key) string {
 		return v
 	}
 	return ""
+}
+
+func getBool(ctx context.Context, k key) bool {
+	if v, ok := ctx.Value(k).(bool); ok {
+		return v
+	}
+
+	return false
+}
+
+func WithOverview(ctx context.Context, value bool) context.Context {
+	return context.WithValue(ctx, OverviewKey, value)
+}
+
+func GetOverview(ctx context.Context) bool {
+	return getBool(ctx, OverviewKey)
 }
