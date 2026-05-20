@@ -28,6 +28,10 @@ func GetSubjectUUID(ctx context.Context) string {
 	return getString(ctx, SubjectUUIDKey)
 }
 
+func GetSubjectUUIDNil(ctx context.Context) *string {
+	return getStringNil(ctx, SubjectUUIDKey)
+}
+
 func WithCorrelationID(ctx context.Context, id string) context.Context {
 	return context.WithValue(ctx, CorrelationIDKey, id)
 }
@@ -87,7 +91,16 @@ func getString(ctx context.Context, k key) string {
 	if v, ok := ctx.Value(k).(string); ok {
 		return v
 	}
+
 	return ""
+}
+
+func getStringNil(ctx context.Context, k key) *string {
+	if v, ok := ctx.Value(k).(string); ok {
+		return &v
+	}
+
+	return nil
 }
 
 func getBool(ctx context.Context, k key) bool {
