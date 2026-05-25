@@ -5,15 +5,16 @@ import "context"
 type key string
 
 const (
-	RequestIDKey       key = "request_id"
-	CorrelationIDKey   key = "correlation_id"
-	SubjectUUIDKey     key = "subject_uuid"
-	SubjectFullNameKey key = "subject_full_name"
-	SubjectEmailKey    key = "subject_email"
-	RoleCodeKey        key = "role_code"
-	PermissionCodesKey key = "permission_codes"
 	AuthTypeKey        key = "auth_type"
+	CorrelationIDKey   key = "correlation_id"
 	OverviewKey        key = "overview"
+	PermissionCodesKey key = "permission_codes"
+	RequestIDKey       key = "request_id"
+	RoleCodeKey        key = "role_code"
+	SubjectEmailKey    key = "subject_email"
+	SubjectFullNameKey key = "subject_full_name"
+	SubjectUUIDKey     key = "subject_uuid"
+	SubjectTesterKey   key = "subject_tester"
 )
 
 func WithRequestID(ctx context.Context, id string) context.Context {
@@ -30,6 +31,14 @@ func GetSubjectUUID(ctx context.Context) string {
 
 func GetSubjectUUIDNil(ctx context.Context) *string {
 	return getStringNil(ctx, SubjectUUIDKey)
+}
+
+func WithSubjectTester(ctx context.Context, value bool) context.Context {
+	return context.WithValue(ctx, SubjectTesterKey, value)
+}
+
+func GetSubjectTester(ctx context.Context) bool {
+	return getBool(ctx, SubjectTesterKey)
 }
 
 func WithCorrelationID(ctx context.Context, id string) context.Context {
