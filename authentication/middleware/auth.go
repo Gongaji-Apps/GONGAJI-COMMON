@@ -36,6 +36,9 @@ func Auth(strategies ...AuthStrategy) gin.HandlerFunc {
 			ctx := c.Request.Context()
 
 			ctx = contextx.WithSubjectUUID(ctx, claims.SubjectUUID)
+			if claims.SubjectUserID != nil {
+				ctx = contextx.WithSubjectUserID(ctx, *claims.SubjectUserID)
+			}
 			ctx = contextx.WithSubjectFullName(ctx, claims.SubjectFullName)
 			ctx = contextx.WithSubjectEmail(ctx, claims.SubjectEmail)
 			ctx = contextx.WithSubjectTester(ctx, claims.SubjectTester)

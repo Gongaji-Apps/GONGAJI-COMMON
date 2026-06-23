@@ -14,6 +14,7 @@ const (
 	SubjectEmailKey    key = "subject_email"
 	SubjectFullNameKey key = "subject_full_name"
 	SubjectUUIDKey     key = "subject_uuid"
+	SubjectUserIDKey   key = "subject_user_id"
 	SubjectTesterKey   key = "subject_tester"
 )
 
@@ -31,6 +32,21 @@ func GetSubjectUUID(ctx context.Context) string {
 
 func GetSubjectUUIDNil(ctx context.Context) *string {
 	return getStringNil(ctx, SubjectUUIDKey)
+}
+
+// SubjectUserID adalah kunci alternatif BIGINT (public.user_mstr.user_id),
+// dipakai untuk FK audit (created_by/updated_by) pada service yang memakai
+// konvensi FK BIGINT alih-alih UUID.
+func WithSubjectUserID(ctx context.Context, id int64) context.Context {
+	return context.WithValue(ctx, SubjectUserIDKey, id)
+}
+
+func GetSubjectUserID(ctx context.Context) *int64 {
+	if v, ok := ctx.Value(SubjectUserIDKey).(int64); ok {
+		return &v
+	}
+
+	return nil
 }
 
 func WithSubjectTester(ctx context.Context, value bool) context.Context {
