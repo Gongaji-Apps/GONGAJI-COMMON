@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/Gongaji-Apps/GONGAJI-FRAMEWORK/contextx"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,10 +17,11 @@ func init() {
 func newRouterWithRole(roleCode any, roles []string) *gin.Engine {
 	r := gin.New()
 	r.GET("/protected",
-		// Simulate Auth() having set role_code in the context.
+		// Simulate Auth() having set role_code in the request context (via contextx).
+		// Hanya string yang valid; non-string/nil → tidak diset (role kosong → ditolak).
 		func(c *gin.Context) {
-			if roleCode != nil {
-				c.Set("role_code", roleCode)
+			if s, ok := roleCode.(string); ok {
+				c.Request = c.Request.WithContext(contextx.WithRoleCode(c.Request.Context(), s))
 			}
 			c.Next()
 		},

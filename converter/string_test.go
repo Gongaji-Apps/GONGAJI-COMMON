@@ -52,3 +52,12 @@ func TestStringToInt(t *testing.T) {
 func ptrInt(v int) *int {
 	return &v
 }
+
+func TestStringToDecimal(t *testing.T) {
+	if d, err := converter.StringToDecimal("12.50"); err != nil || d == nil || d.String() != "12.5" {
+		t.Fatalf("valid: got %v err %v", d, err)
+	}
+	if _, err := converter.StringToDecimal("abc"); err == nil {
+		t.Fatalf("invalid harus error")
+	}
+}
