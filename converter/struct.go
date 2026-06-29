@@ -36,6 +36,11 @@ func StructToMap(input any) (map[string]any, error) {
 			continue
 		}
 
+		// skip association/relasi fields (konvensi `<Entity>_FK`) — bukan kolom filter
+		if strings.HasSuffix(name, "_fk") {
+			continue
+		}
+
 		if isZeroValue(field) {
 			continue
 		}

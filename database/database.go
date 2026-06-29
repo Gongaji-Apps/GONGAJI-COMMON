@@ -21,6 +21,10 @@ type Config struct {
 	MaxIdleConns int
 	MaxLifetime  time.Duration
 	LogLevel     logger.LogLevel
+
+	// StatementTimeout (opsional) menyetel server-side statement_timeout per koneksi
+	// sebagai pengaman query lambat. 0 = tidak diaktifkan (perilaku lama).
+	StatementTimeout time.Duration
 }
 
 func NewPostgres(cfg Config) (*gorm.DB, error) {
@@ -34,6 +38,10 @@ func NewPostgres(cfg Config) (*gorm.DB, error) {
 		cfg.SSLMode,
 		cfg.TimeZone,
 	)
+
+	if cfg.StatementTimeout > 0 {
+		dsn += fmt.Sprintf(" options='-c statement_timeout=%d'", cfg.StatementTimeout.Milliseconds())
+	}
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(cfg.LogLevel),

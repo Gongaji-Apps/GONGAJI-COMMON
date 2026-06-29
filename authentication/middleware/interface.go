@@ -8,6 +8,10 @@ import (
 
 type AuthClaims struct {
 	SubjectUUID     string
+	SubjectUserID   *int64 // opsional: kunci alternatif BIGINT (public.user_mstr.user_id)
+	SubjectFullName string
+	SubjectEmail    string
+	SubjectTester   bool
 	Role            string
 	PermissionCodes map[string]bool
 	Extra           map[string]any
