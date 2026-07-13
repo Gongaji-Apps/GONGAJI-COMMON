@@ -110,7 +110,9 @@ External:     gorm, gin, redis-go, firebase-admin, ...
 
 ### Tested vs untested
 
-**Sudah tested**: `converter`, `crypto/rsa`, `httputil`, `messaging/whatsapp`, `mailer`, `cloudtask`, `notification/fcm`, `scheduler`, `cache`, `cache/redis`, `authentication/jwt`, `authentication/middleware`.
+**Sudah tested**: `converter`, `crypto/rsa`, `httputil`, `messaging/whatsapp`, `mailer`, `cloudtask`, `notification/fcm`, `scheduler`, `cache`, `cache/redis`, `authentication/jwt`, `authentication/middleware`, `gormtypes`.
+
+`gormtypes` (baru): tipe kolom Postgres untuk GORM — `JSONB` (jsonb) & `StringArray` (`text[]`). Dipakai service consumer (mis. ngaji) untuk kolom jsonb/array.
 
 **Belum tested**: `database/repository`, `binding`, `validator`, `response`, `errors`, `query`, `result`, `pagination`, `formatter` (kecuali converter), `random`, `timeutil`, `tracer`, `storage/gcs`. Tambahkan test saat menyentuh kode di sini.
 
@@ -206,6 +208,8 @@ Lihat PR #2 (httputil), PR #4 (whatsapp), PR #12 (jwt) untuk template.
 
 6. **`AuthorizeRoles()` tanpa argumen = always reject**. Defensive untuk mencegah accidentally-open route. Untuk endpoint yang harus open ke semua authenticated user, jangan pasang `AuthorizeRoles` sama sekali.
 
+6b. **`RequirePermission(perm...)` vs `AuthorizeRoles(roles...)`** di `authentication/middleware`: `RequirePermission` gate berbasis **permission** (dipakai luas oleh service ngaji, cek permission di klaim JWT), sedangkan `AuthorizeRoles` berbasis role. Keduanya mengembalikan 403 via envelope framework bila tak lolos.
+
 7. **JWT reserved claims**: di `jwt.Claims.Extra`, key seperti `sub`, `exp`, `iat`, `nbf`, `iss`, `aud`, `jti` di-strip otomatis saat Generate. Jangan kaget kalau caller pass `Extra: {"sub": "x"}` dan tidak ke-emit.
 
 8. **Cache backend swap**: `cache.Memory` dan `cache/redis.Cache` punya semantic identik (JSON encoding, `ErrNotFound` on miss, idempotent Delete). Swap impl = 1-line change.
@@ -214,15 +218,24 @@ Lihat PR #2 (httputil), PR #4 (whatsapp), PR #12 (jwt) untuk template.
 
 ## Versioning
 
-Saat ini di `v0.5.0`. Selama `v0.x`, breaking change boleh di minor version (mis. v0.4.0 hapus deprecated alias dari v0.2.0). Setelah `v1.0.0`, breaking hanya di major.
+> **PENTING (sumber kebenaran build):** Go module resolve lewat **git tag**. Tag rilis
+> terakhir = **`v0.0.53`** (skema `v0.0.x`), dan itulah yang di-pin service consumer di
+> `go.mod` — bukan label `v0.5.0` di CHANGELOG. Kalau menaikkan versi, tag `v0.0.x`
+> berikutnya (mis. `v0.0.54`) lalu bump `require` di service. Label CHANGELOG (`v0.x.0`)
+> bersifat naratif/histori; jangan tertukar dengan tag git.
 
-Tag release **setelah** PR di-merge ke main:
+Selama `v0.x`, breaking change boleh di minor version. Setelah `v1.0.0`, breaking hanya di major.
+
+Tag release **setelah** merge ke main:
 
 ```bash
 git checkout main && git pull
-git tag -a v0.5.0 -m "Add authentication/jwt + AuthorizeRoles"
-git push origin v0.5.0
+git tag -a v0.0.54 -m "<ringkas perubahan>"
+git push origin v0.0.54
 ```
+
+**Terakhir masuk main (v0.0.53):** `gormtypes` (JSONB/StringArray), `converter.StringToDecimal`,
+perbaikan `middleware.RequirePermission` (contextx + envelope).
 
 ---
 
