@@ -60,20 +60,20 @@ func Auth(strategies ...AuthStrategy) gin.HandlerFunc {
 	}
 }
 
+// RequirePermission menjaga endpoint berdasarkan permission code (RBAC).
+// Sumber permission codes = request context (diisi Auth lewat
+// contextx.WithPermissionCodes), konsisten dengan Auth di atas. Respons gagal
+// memakai envelope framework (response.Error), bukan JSON mentah.
 func RequirePermission(value string) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		permission_codes, exists := ctx.Get("permission_codes")
+		codes := contextx.GetPermissionCodes(ctx.Request.Context())
 
-		if !exists {
-			ctx.AbortWithStatusJSON(403, gin.H{"error": "forbidden"})
+		if codes == nil || !codes[value] {
+			response.Error(ctx, errors.NewForbidden("[Forbidden] Afwan, Anda tidak memiliki izin untuk mengakses endpoint ini."))
+			ctx.Abort()
 			return
 		}
 
-		permission_code, ok := permission_codes.(map[string]bool)
-		if !ok || !permission_code[value] {
-			ctx.AbortWithStatusJSON(403, gin.H{"error": "insufficient permissions"})
-			return
-		}
 		ctx.Next()
 	}
 }

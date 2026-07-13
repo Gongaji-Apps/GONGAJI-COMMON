@@ -19,6 +19,7 @@ require github.com/robfig/cron/v3 v3.0.1
 require (
 	cloud.google.com/go/cloudtasks v1.16.0
 	github.com/golang-jwt/jwt/v5 v5.3.1
+	github.com/shopspring/decimal v1.4.0
 )
 
 require (

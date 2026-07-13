@@ -5,6 +5,8 @@ import (
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/shopspring/decimal"
 )
 
 func StringToInt(value string) (*int, error) {
@@ -74,6 +76,16 @@ func StringToDate(value string) (*time.Time, error) {
 
 	if err != nil {
 		return nil, fmt.Errorf("[Internal Server Error] Oops! Kami mengalami masalah saat melakukan Konversi Tipe Data String ke Date. %s", os.Getenv("ADDITIONAL_ERR_500"))
+	}
+
+	return &result, nil
+}
+
+func StringToDecimal(value string) (*decimal.Decimal, error) {
+	result, err := decimal.NewFromString(value)
+
+	if err != nil {
+		return nil, fmt.Errorf("[Internal Server Error] Oops! Kami mengalami masalah saat melakukan Konversi Tipe Data String ke Decimal. %s", os.Getenv("ADDITIONAL_ERR_500"))
 	}
 
 	return &result, nil
