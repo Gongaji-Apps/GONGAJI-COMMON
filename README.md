@@ -137,6 +137,7 @@ Example response error:
 | [`httputil`](docs/packages.md#httputil) | Reusable HTTP client + retry + timeout | — (stdlib only) |
 | [`messaging/whatsapp`](docs/packages.md#messagingwhatsapp) | WhatsApp gateway client (V1+V2 fallback) | httputil |
 | [`mailer`](docs/packages.md#mailer) | SMTP email + HTML body + attachment | — (stdlib only) |
+| [`mailer/surat`](docs/packages.md#mailersurat) | Cetakan surel HTML bermerek (kepala, CTA, kotak kode, multipart) | — (stdlib only) |
 | [`notification/fcm`](docs/packages.md#notificationfcm) | Firebase Cloud Messaging push | firebase-admin |
 | [`cloudtask`](docs/packages.md#cloudtask) | Google Cloud Tasks v2 wrapper | cloud.google.com/go/cloudtasks |
 | [`storage`](docs/packages.md#storage) + [`storage/gcs`](docs/packages.md#storagegcs) | File upload/download abstraction + GCS impl | cloud.google.com/go/storage |

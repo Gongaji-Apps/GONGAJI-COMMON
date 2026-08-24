@@ -1265,6 +1265,69 @@ err := m.Send(ctx, mailer.Message{
 
 ---
 
+## mailer/surat
+
+**Tujuan**: cetakan surel HTML bermerek yang seragam lintas service — kepala wordmark, kartu isi, kotak kode (OTP), tombol CTA, catatan, kaki "surel otomatis" — plus versi text/plain untuk multipart. Stdlib only.
+
+### Types
+
+```go
+type Merek struct {
+    Nama    string // wordmark pita kepala, mis. "Go Ngaji"
+    Tagline string // teks kecil di samping wordmark (opsional)
+
+    WarnaPrimer string // tombol CTA + tautan
+    WarnaPekat  string // pita kepala + teks kode
+    WarnaAksen  string // garis tipis bawah kepala
+
+    BasisURL      string // tautan wordmark di kaki
+    TautanBantuan string // opsional; menambah baris "Butuh bantuan?"
+}
+
+type Surat struct {
+    Judul        string   // kepala kartu (subjek diatur pemanggil)
+    Teks         string   // isi polos; "\n\n" = paragraf; di-escape otomatis
+    ParagrafHTML []string // alternatif Teks bila butuh markup sendiri
+    Kode         string   // kotak kode besar (OTP/kode unduh); kosong = tanpa kotak
+    CTALabel     string   // tombol; kosong = tanpa tombol
+    CTAURL       string
+    Catatan      string   // teks kecil redup di bawah isi
+}
+```
+
+### Functions
+
+```go
+func GoNgaji(basisURL string) Merek      // merek bawaan Go Ngaji (indigo + emas)
+func (s Surat) HTML(m Merek) string      // dokumen surel utuh
+func (s Surat) TeksPolos() string        // versi text/plain (multipart)
+```
+
+### Pemakaian
+
+```go
+m := surat.GoNgaji("https://learning.gongaji.id")
+s := surat.Surat{
+    Judul:    "Termin 2 jatuh tempo",
+    Teks:     "Assalamu'alaikum Budi,\n\nTermin 2 jatuh tempo 28 Agustus.",
+    CTALabel: "Lihat Tagihan",
+    CTAURL:   "https://learning.gongaji.id/tagihan",
+}
+err := mail.Send(ctx, mailer.Message{
+    To: []string{to}, Subject: s.Judul,
+    HTMLBody: s.HTML(m), TextBody: s.TeksPolos(),
+})
+```
+
+### Gotchas
+
+- **Tabel + CSS inline, bukan `<style>`/flex/grid** — klien surel (Outlook, Gmail) memangkas `<style>` dan mengabaikan layout modern. Jangan "merapikan" markup hasil render.
+- **"Interaktif" dalam surel = tombol tautan** — JavaScript diblokir semua klien. Di bawah tombol selalu tercetak tautan mentah cadangan.
+- **Semua isi di-escape** (`Judul`, `Teks`, `Kode`, label/URL CTA, identitas merek). `ParagrafHTML` satu-satunya jalur markup mentah — isi hanya dengan markup milik sendiri, bukan input user.
+- **Package tidak membaca env** — service pemanggil yang menentukan `Merek` dan basis URL (pola DI framework).
+
+---
+
 ## notification/fcm
 
 **Tujuan**: Firebase Cloud Messaging push notification untuk single device, multi-device, dan topic.

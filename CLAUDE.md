@@ -110,7 +110,7 @@ External:     gorm, gin, redis-go, firebase-admin, ...
 
 ### Tested vs untested
 
-**Sudah tested**: `converter`, `crypto/rsa`, `httputil`, `messaging/whatsapp`, `mailer`, `cloudtask`, `notification/fcm`, `scheduler`, `cache`, `cache/redis`, `authentication/jwt`, `authentication/middleware`, `gormtypes`.
+**Sudah tested**: `converter`, `crypto/rsa`, `httputil`, `messaging/whatsapp`, `mailer`, `mailer/surat`, `cloudtask`, `notification/fcm`, `scheduler`, `cache`, `cache/redis`, `authentication/jwt`, `authentication/middleware`, `gormtypes`.
 
 `gormtypes` (baru): tipe kolom Postgres untuk GORM — `JSONB` (jsonb) & `StringArray` (`text[]`). Dipakai service consumer (mis. ngaji) untuk kolom jsonb/array.
 
@@ -219,9 +219,9 @@ Lihat PR #2 (httputil), PR #4 (whatsapp), PR #12 (jwt) untuk template.
 ## Versioning
 
 > **PENTING (sumber kebenaran build):** Go module resolve lewat **git tag**. Tag rilis
-> terakhir = **`v0.0.53`** (skema `v0.0.x`), dan itulah yang di-pin service consumer di
-> `go.mod` — bukan label `v0.5.0` di CHANGELOG. Kalau menaikkan versi, tag `v0.0.x`
-> berikutnya (mis. `v0.0.54`) lalu bump `require` di service. Label CHANGELOG (`v0.x.0`)
+> terakhir = **`v0.0.54`** (skema `v0.0.x`), dan itulah yang di-pin service consumer di
+> `go.mod` — bukan label `v0.6.0` di CHANGELOG. Kalau menaikkan versi, tag `v0.0.x`
+> berikutnya (mis. `v0.0.55`) lalu bump `require` di service. Label CHANGELOG (`v0.x.0`)
 > bersifat naratif/histori; jangan tertukar dengan tag git.
 
 Selama `v0.x`, breaking change boleh di minor version. Setelah `v1.0.0`, breaking hanya di major.
@@ -230,12 +230,12 @@ Tag release **setelah** merge ke main:
 
 ```bash
 git checkout main && git pull
-git tag -a v0.0.54 -m "<ringkas perubahan>"
-git push origin v0.0.54
+git tag -a v0.0.55 -m "<ringkas perubahan>"
+git push origin v0.0.55
 ```
 
-**Terakhir masuk main (v0.0.53):** `gormtypes` (JSONB/StringArray), `converter.StringToDecimal`,
-perbaikan `middleware.RequirePermission` (contextx + envelope).
+**Terakhir masuk main (v0.0.54):** `mailer/surat` — cetakan surel HTML bermerek lintas service
+(Merek parameter + Surat: CTA, kotak kode, multipart; pemakai: ngaji + authentication).
 
 ---
 

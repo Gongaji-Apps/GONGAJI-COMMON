@@ -7,6 +7,20 @@ Selama `v0.x`, **breaking change boleh terjadi di minor version**. Setelah `v1.0
 
 ---
 
+## [v0.6.0] — mailer/surat: surel HTML bermerek lintas service
+
+### Added
+
+- **`mailer/surat/`** — cetakan surel HTML bermerek yang seragam lintas service (stdlib only):
+  - `surat.Surat{Judul, Teks, ParagrafHTML, Kode, CTALabel, CTAURL, Catatan}` — konten satu surel; bagian kosong tidak dirender
+  - `surat.Surat.HTML(m Merek)` — dokumen surel utuh: kepala wordmark + garis aksen, kartu isi, kotak kode besar (OTP), tombol CTA + tautan mentah cadangan, catatan redup, kaki "surel otomatis". Tabel + CSS inline (klien surel memangkas `<style>`, mengabaikan flex/grid, memblokir JS); semua isi di-escape
+  - `surat.Surat.TeksPolos()` — versi text/plain untuk multipart/alternative (pasangan `mailer.Message.TextBody`)
+  - `surat.Merek{Nama, Tagline, WarnaPrimer, WarnaPekat, WarnaAksen, BasisURL, TautanBantuan}` — identitas visual sebagai parameter, bukan konstanta: beberapa produk pada satu pengirim berbagi struktur tanpa berbagi warna/nama; package tidak membaca env (DI, konsisten pola framework)
+  - `surat.GoNgaji(basisURL)` — merek bawaan Go Ngaji (indigo `#5145b9`/`#3f3596` + emas `#ffc748`, palet web santri)
+  - Pemakai pertama: GONGAJI-API-NGAJI (semua notifikasi + surel sertifikat/pengingat batch) dan API-AUTHENTICATION (OTP reset sandi)
+
+---
+
 ## [v0.5.0] — JWT package + AuthorizeRoles
 
 ### Added
