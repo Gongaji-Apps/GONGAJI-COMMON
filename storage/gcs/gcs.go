@@ -44,16 +44,20 @@ func (g *GCS) Delete(ctx context.Context, path string) error {
 	return g.client.Bucket(g.cfg.Bucket).Object(path).Delete(ctx)
 }
 
+// SignedURL menandatangani URL objek (V4, GET) memakai kredensial si klien.
+//
+// Lewat BucketHandle.SignedURL, BUKAN storage.SignedURL paket: versi paket wajib
+// diberi GoogleAccessID+PrivateKey eksplisit, dan tanpa itu selalu gagal
+// "missing required credentials" — bug yang selama ini memaksa service konsumen
+// (GONGAJI-API-NGAJI internal/storage/signer.go) menyalin logika penandatanganan
+// sendiri. BucketHandle menurunkannya otomatis dari kredensial klien
+// (option.WithCredentialsJSON / ADC).
 func (g *GCS) SignedURL(path string, expire time.Duration) (string, error) {
-	return storage.SignedURL(
-		g.cfg.Bucket,
-		path,
-		&storage.SignedURLOptions{
-			Scheme:  storage.SigningSchemeV4,
-			Method:  "GET",
-			Expires: time.Now().Add(expire),
-		},
-	)
+	return g.client.Bucket(g.cfg.Bucket).SignedURL(path, &storage.SignedURLOptions{
+		Scheme:  storage.SigningSchemeV4,
+		Method:  "GET",
+		Expires: time.Now().Add(expire),
+	})
 }
 
 func (g *GCS) DeleteBatch(ctx context.Context, paths []string) error {
